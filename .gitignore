@@ -1,0 +1,30 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Course handouts (local only)
+References/
+
+# Credentials
+kaggle.json
+.env
+
+# Data (created by the data preparation pipeline)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Trained models
+*.pt
+*.h5
+*.keras

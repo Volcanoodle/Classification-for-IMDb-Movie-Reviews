@@ -18,7 +18,7 @@ def load_raw():
     rows = []
     for split in ["train", "test"]:
         for label_name in ["pos", "neg"]:
-            # Line i of urls_<label>.txt belongs to the review whose file id is i
+            # Line i of urls_<label>.txt (counting from 0) belongs to the review with file id i
             url_file = RAW_DIR / split / f"urls_{label_name}.txt"
             urls = url_file.read_text(encoding="utf-8").splitlines()
 
@@ -40,6 +40,18 @@ def load_raw():
     return df
 
 
+def clean_text(df):
+    """Replace HTML line breaks with spaces and collapse repeated whitespace."""
+    df = df.copy()
+    df["text"] = (
+        df["text"]
+        .str.replace("<br />", " ", regex=False)  # HTML line break -> space
+        .str.replace(r"\s+", " ", regex=True)     # several spaces/tabs -> one space
+        .str.strip()                              # no spaces at the start or end
+    )
+    return df
+
+
 def main():
     df = load_raw()
 
@@ -54,6 +66,17 @@ def main():
     print(df.groupby("split")["movie_id"].nunique())
     print()
     print(df[["review_id", "label", "rating", "movie_id", "split"]].head(3))
+
+    print()
+    print("Step 2: clean text")
+    before = df["text"]
+    df = clean_text(df)
+    after = df["text"]
+    print("Rows with <br /> before:", before.str.contains("<br />", regex=False).sum())
+    print("Rows with <br after:", after.str.contains("<br", case=False, regex=False).sum())
+    print("Rows changed:", (before != after).sum())
+    print("Rows with double spaces:", after.str.contains("  ", regex=False).sum())
+    print("Empty rows:", (after == "").sum())
 
 
 if __name__ == "__main__":

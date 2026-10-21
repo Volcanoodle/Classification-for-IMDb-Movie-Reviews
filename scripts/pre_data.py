@@ -52,6 +52,19 @@ def clean_text(df):
     return df
 
 
+def remove_duplicates(df):
+    """Drop repeated reviews from train; test is kept unchanged."""
+    train = df[df["split"] == "train"]
+    test = df[df["split"] == "test"]
+
+    # Same text twice inside train: keep the first copy (rows are sorted by review_id)
+    train = train.drop_duplicates(subset="text", keep="first")
+    # Same text in train and test: drop the train copy, so test stays unseen
+    train = train[~train["text"].isin(test["text"])]
+
+    return pd.concat([train, test]).sort_values("review_id").reset_index(drop=True)
+
+
 def main():
     df = load_raw()
 
@@ -66,7 +79,6 @@ def main():
     print(df.groupby("split")["movie_id"].nunique())
     print()
     print(df[["review_id", "label", "rating", "movie_id", "split"]].head(3))
-
     print()
     print("Step 2: clean text")
     before = df["text"]
@@ -77,6 +89,19 @@ def main():
     print("Rows changed:", (before != after).sum())
     print("Rows with double spaces:", after.str.contains("  ", regex=False).sum())
     print("Empty rows:", (after == "").sum())
+    print()
+    print("Step 3: remove duplicates")
+    n_before = (df["split"] == "train").sum()
+    df = remove_duplicates(df)
+    train = df[df["split"] == "train"]
+    test = df[df["split"] == "test"]
+    print("Train rows before:", n_before)
+    print("Train rows after:", len(train))
+    print("Test rows after:", len(test))
+    print("Train labels:", train["label"].value_counts().to_dict())
+    print("Train movies:", train["movie_id"].nunique())
+    print("Duplicates left in train:", train["text"].duplicated().sum())
+    print("Train texts also in test:", train["text"].isin(test["text"]).sum())
 
 
 if __name__ == "__main__":

@@ -11,12 +11,13 @@ Verify the three text-cleaning rules on all 50,000 labelled IMDb reviews and rec
 - Count reviews containing `<br />` before cleaning, reviews changed, reviews still containing `<br` (case-insensitive) after cleaning, and reviews empty after cleaning.
 - A review counts as changed when its cleaned text differs from the original text (exact string comparison).
 - Use `scripts/check_text_cleaning.py`; no dataset files are modified.
-- Select three reviews uniformly at random from the 50,000 labelled reviews. No seed is used, so a later run selects different reviews.
+- Select three reviews uniformly at random from the 50,000 labelled reviews. By default no seed is used, so a later run selects different reviews; pass `--seed N` for a reproducible sample.
 
 Run from the repository root:
 
 ```powershell
 .venv/Scripts/python.exe -I scripts/check_text_cleaning.py
+.venv/Scripts/python.exe -I scripts/check_text_cleaning.py --seed 123  # optional: reproducible
 ```
 
 Counts A, C and D were also checked at the command line with `grep`/`find` over the same four folders.
@@ -34,7 +35,7 @@ The 176 additional changed reviews contained no `<br />` and were changed by whi
 
 ### Examples
 
-The examples below are from one run. Because no seed is used, running the script again will select different reviews. Example 3 contains no `<br />` and no repeated or leading/trailing whitespace, so it is unchanged; the rules do not alter reviews that are already clean.
+The examples below are from one run without a seed. Running the script again will select different reviews; pass `--seed N` to make a draw reproducible. Example 3 contains no `<br />` and no repeated or leading/trailing whitespace, so it is unchanged; the rules do not alter reviews that are already clean.
 
 ```text
 --- Example 1: train/neg/8793_1.txt ---
@@ -65,4 +66,4 @@ great historical movie, will not allow a viewer to leave once you begin to watch
 
 ### Limitations
 
-This script implements issue #2's rules independently and does not import or reuse `scripts/pre_data.py`. That file had been read during an earlier review, so this was not a strictly blind check. The examples are a single unseeded random draw, so they differ between runs; the counts do not depend on which examples are selected.
+This script implements issue #2's rules independently and does not import or reuse `scripts/pre_data.py`. That file had been read during an earlier review, so this was not a strictly blind check. The examples are from one unseeded draw and cannot be reproduced exactly; pass `--seed N` to make future draws reproducible. The counts do not depend on which examples are selected.

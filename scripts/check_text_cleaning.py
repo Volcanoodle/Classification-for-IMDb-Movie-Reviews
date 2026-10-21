@@ -1,15 +1,18 @@
 """Check the text-cleaning rules described in issue #2.
 
 Reads the 50,000 labelled reviews, reports counts A-D, and prints
-three random before/after examples (E). No seed is used, so each run
-selects different examples.
+three random before/after examples (E). By default no seed is used, so
+each run selects different examples; pass --seed for a reproducible
+sample.
 
 Usage:
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py
+    .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --seed 123
 """
 
 from __future__ import annotations
 
+import argparse
 import random
 import re
 from pathlib import Path
@@ -38,6 +41,15 @@ def review_files() -> list[Path]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional seed for reproducible example selection.",
+    )
+    args = parser.parse_args()
+
     files = review_files()
     per_group = {(split, label): 0 for split in SPLITS for label in LABELS}
     containing_br = 0
@@ -69,8 +81,12 @@ def main() -> None:
     print(f"D. Reviews that end up empty: {empty}")
     print()
 
-    sample = random.sample(files, k=3)
-    print("E. Three random examples (no seed; a later run selects different reviews):")
+    if args.seed is None:
+        sample = random.sample(files, k=3)
+        print("E. Three random examples (no seed; a later run selects different reviews):")
+    else:
+        sample = random.Random(args.seed).sample(files, k=3)
+        print(f"E. Three random examples (seed={args.seed}):")
     for index, path in enumerate(sample, start=1):
         before = path.read_text(encoding="utf-8")
         after = clean_text(before)

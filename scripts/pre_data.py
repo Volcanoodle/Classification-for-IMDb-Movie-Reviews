@@ -1,5 +1,11 @@
 '''
 Data preparation pipeline: raw IMDb files -> processed tables.
+
+Outputs:
+    data/processed/train.csv      
+    data/processed/test.csv       
+    data/splits/train_folds.csv   
+
 Usage: python scripts/pre_data.py
 '''
 
@@ -7,10 +13,16 @@ import re
 from pathlib import Path
 
 import pandas as pd
+from sklearn.model_selection import StratifiedGroupKFold
 
 # Project root = the folder above scripts/
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "data" / "raw" / "aclImdb"
+PROCESSED_DIR = ROOT / "data" / "processed"
+SPLITS_DIR = ROOT / "data" / "splits"
+
+N_FOLDS = 10
+SEED = 42
 
 
 def load_raw():
@@ -65,6 +77,42 @@ def remove_duplicates(df):
     return pd.concat([train, test]).sort_values("review_id").reset_index(drop=True)
 
 
+def assign_folds(df):
+    """Give every train row a fold number 0-9; one movie never spans two folds."""
+    df = df.copy()
+    df["fold"] = -1  # test rows keep -1: they belong to no fold
+    train_idx = df.index[df["split"] == "train"]
+    train = df.loc[train_idx]
+
+    splitter = StratifiedGroupKFold(n_splits=N_FOLDS, shuffle=True, random_state=SEED)
+    for fold, (_, val_pos) in enumerate(
+        splitter.split(train, train["label"], groups=train["movie_id"])
+    ):
+        # val_pos counts rows inside train (0, 1, 2 ...); turn it back into df row labels
+        df.loc[train_idx[val_pos], "fold"] = fold
+    return df
+
+
+def save_outputs(df):
+    """Write the train and test tables and the fold table; return what was written."""
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+    SPLITS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # rating decides the label, so it is kept for analysis only and must never be a model input
+    train_cols = ["review_id", "text", "label", "rating", "movie_id", "fold"]
+    test_cols = ["review_id", "text", "label", "rating", "movie_id"]
+    train = df.loc[df["split"] == "train", train_cols].reset_index(drop=True)
+    test = df.loc[df["split"] == "test", test_cols].reset_index(drop=True)
+
+    # "\n" line endings on every system, so the fold table is identical on Windows and macOS
+    train.to_csv(PROCESSED_DIR / "train.csv", index=False, lineterminator="\n")
+    test.to_csv(PROCESSED_DIR / "test.csv", index=False, lineterminator="\n")
+    train[["review_id", "fold"]].to_csv(
+        SPLITS_DIR / "train_folds.csv", index=False, lineterminator="\n"
+    )
+    return train, test
+
+
 def main():
     df = load_raw()
 
@@ -102,6 +150,27 @@ def main():
     print("Train movies:", train["movie_id"].nunique())
     print("Duplicates left in train:", train["text"].duplicated().sum())
     print("Train texts also in test:", train["text"].isin(test["text"]).sum())
+    print()
+    print("Step 4: assign folds")
+    df = assign_folds(df)
+    train = df[df["split"] == "train"]
+    summary = train.groupby("fold").agg(
+        rows=("label", "size"),
+        pos_ratio=("label", "mean"),
+        movies=("movie_id", "nunique"),
+    )
+    print(summary.round(3))
+    print("Train rows without a fold:", (train["fold"] == -1).sum())
+    print("Movies in more than one fold:", (train.groupby("movie_id")["fold"].nunique() > 1).sum())
+    print()
+    print("Step 5: save outputs")
+    train, test = save_outputs(df)
+    for name, table in [("train", train), ("test", test)]:
+        loaded = pd.read_csv(PROCESSED_DIR / f"{name}.csv")
+        print(f"{name}.csv: {len(loaded)} rows, identical after reload: {table.equals(loaded)}")
+    folds = pd.read_csv(SPLITS_DIR / "train_folds.csv")
+    print(f"train_folds.csv: {len(folds)} rows, "
+          f"identical after reload: {train[['review_id', 'fold']].equals(folds)}")
 
 
 if __name__ == "__main__":

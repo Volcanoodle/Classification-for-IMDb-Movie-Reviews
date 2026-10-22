@@ -132,3 +132,18 @@ great historical movie, will not allow a viewer to leave once you begin to watch
 ### Limitations
 
 This script implements issue #2's rules independently and does not import or reuse `scripts/pre_data.py`. That file had been read during an earlier review, so this was not a strictly blind check. The examples are from one unseeded draw and cannot be reproduced exactly; pass `--seed N` to make future draws reproducible. The counts do not depend on which examples are selected.
+
+## Comparison with pre_data.py
+
+| Check | Reviewer | Reviewer's result | pre_data.py | Match |
+| --- | --- | ---: | ---: | :---: |
+| A. Reviews containing `<br />` before cleaning | Enze ZHOU | 29,200 | 29,200 | Yes |
+| B. Reviews changed by cleaning | Enze ZHOU | 29,376 | 29,376 | Yes |
+| C. Reviews still containing `<br` after cleaning | Enze ZHOU | 0 | 0 | Yes |
+| D. Reviews empty after cleaning | Enze ZHOU | 0 | 0 | Yes |
+| F. Distinct train texts | Junqiang Zhu | 24,902 | not printed | – |
+| G. Distinct train texts also in test | Junqiang Zhu | 123 | not printed | – |
+| H. Train rows after de-duplication | Junqiang Zhu | 24,779 | 24,779 | Yes |
+| Movie IDs at 9 boundary samples | Junqiang Zhu | 9 matches, 0 mismatches | – | – |
+
+F and G are not printed by the script, but they are consistent with H: 24,902 − 123 = 24,779.

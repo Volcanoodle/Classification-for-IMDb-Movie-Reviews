@@ -76,16 +76,16 @@ This project requires Python 3.14 (any 3.14.x patch version is supported).
 5. Launch Jupyter Lab: `jupyter lab`
 
 ## Data preparation pipeline
-
-*(Scripts to be implemented in Week 5. Planned steps include:)*
-
-1. Download the raw data from the official URL and extract it to `data/raw/`.
-2. Verify the dataset size and integrity.
-3. Data cleaning: remove duplicates, strip HTML tags, and standardize labels.
-4. Split the data into training, validation, and test sets using a fixed random seed.
-5. Save the processed data to `data/processed/`.
-
-**How to run:** [To be updated once the script/notebook is ready]
+1. Download `aclImdb_v1.tar.gz` from the official URL and extract it so that the folder `data/raw/aclImdb/` exists.
+2. From the project root, run `python scripts/pre_data.py`. It takes a few minutes and prints a check after each step.
+The script:
+1. reads the 50,000 labelled reviews (the 50,000 unlabelled ones are not used);
+2. replaces `<br />` with a space and collapses repeated whitespace;
+3. removes repeated reviews from the training set, including training reviews that also appear in the test set; the official test set is kept unchanged;
+4. assigns each training review to one of 10 folds, stratified by label and grouped by movie (seed 42);
+5. writes `data/processed/train.csv` (24,779 rows) and `data/processed/test.csv` (25,000 rows), which are not tracked by git, and `data/splits/train_folds.csv`, the reference fold assignment, which is tracked by git.
+The `rating` column is for analysis only: it determines the label and must never be used as a model input.
+Independent checks of these steps are in `documentation/week6/`.
 
 ## R2: Data analysis and exploration
 

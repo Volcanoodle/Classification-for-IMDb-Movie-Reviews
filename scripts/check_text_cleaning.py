@@ -1,13 +1,14 @@
 """Check the text-cleaning rules described in issue #2.
 
 Reads the 50,000 labelled reviews, reports counts A-D, and prints
-three random before/after examples (E), truncated to about 200
-characters by default. By default no seed is used, so each run selects
+random before/after examples (E), three by default, truncated to about
+200 characters. By default no seed is used, so each run selects
 different examples; pass --seed for a reproducible sample.
 
 Usage:
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --seed 123
+    .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --count 5
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --excerpt-chars 300
 """
 
@@ -79,12 +80,20 @@ def main() -> None:
         help="Optional seed for reproducible example selection.",
     )
     parser.add_argument(
+        "--count",
+        type=int,
+        default=3,
+        help="Number of random examples (default: %(default)s).",
+    )
+    parser.add_argument(
         "--excerpt-chars",
         type=int,
         default=DEFAULT_EXCERPT_CHARS,
         help="Maximum characters shown per example (default: %(default)s).",
     )
     args = parser.parse_args()
+    if args.count <= 0:
+        parser.error("--count must be positive")
     if args.excerpt_chars <= 0:
         parser.error("--excerpt-chars must be positive")
 
@@ -120,11 +129,14 @@ def main() -> None:
     print()
 
     if args.seed is None:
-        sample = random.sample(files, k=3)
-        print("E. Three random examples (no seed; a later run selects different reviews):")
+        sample = random.sample(files, k=args.count)
+        print(
+            f"E. {args.count} random examples "
+            "(no seed; a later run selects different reviews):"
+        )
     else:
-        sample = random.Random(args.seed).sample(files, k=3)
-        print(f"E. Three random examples (seed={args.seed}):")
+        sample = random.Random(args.seed).sample(files, k=args.count)
+        print(f"E. {args.count} random examples (seed={args.seed}):")
     for index, path in enumerate(sample, start=1):
         before = path.read_text(encoding="utf-8")
         after = clean_text(before)

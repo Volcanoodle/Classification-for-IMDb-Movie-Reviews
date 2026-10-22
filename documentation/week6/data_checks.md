@@ -11,7 +11,7 @@ Verify the three text-cleaning rules on all 50,000 labelled IMDb reviews and rec
 - Count reviews containing `<br />` before cleaning, reviews changed, reviews still containing `<br` (case-insensitive) after cleaning, and reviews empty after cleaning.
 - A review counts as changed when its cleaned text differs from the original text (exact string comparison).
 - Use `scripts/check_text_cleaning.py`; no dataset files are modified.
-- Select three reviews uniformly at random from the 50,000 labelled reviews. By default no seed is used, so a later run selects different reviews; pass `--seed N` for a reproducible sample.
+- Select N reviews (default 3) uniformly at random from the 50,000 labelled reviews. By default no seed is used, so a later run selects different reviews; pass `--seed N` for a reproducible sample and `--count N` to change how many are shown.
 - Show only an excerpt of each review, about 200 characters by default (`--excerpt-chars`). The excerpt is taken around the first change; full review text is not reproduced because the dataset licence does not permit full-text redistribution.
 
 Run from the repository root:
@@ -19,6 +19,7 @@ Run from the repository root:
 ```powershell
 .venv/Scripts/python.exe -I scripts/check_text_cleaning.py
 .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --seed 20261021
+.venv/Scripts/python.exe -I scripts/check_text_cleaning.py --count 5
 .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --excerpt-chars 300
 ```
 
@@ -37,7 +38,7 @@ The 176 additional changed reviews contained no `<br />` and were changed by whi
 
 ### Examples
 
-The examples below were generated with `--seed 20261021` and the default 200-character excerpt. They are excerpts, not full reviews, because the dataset licence does not permit full-text reproduction. Example 3 is unchanged: it contains none of the targeted patterns, so the rules leave it as it is.
+The examples below were generated with `--seed 20261021`, the default `--count 3`, and the default 200-character excerpt. They are excerpts, not full reviews, because the dataset licence does not permit full-text reproduction. Example 3 is unchanged: it contains none of the targeted patterns, so the rules leave it as it is.
 
 ```text
 --- Example 1: test/pos/8467_10.txt ---
@@ -68,4 +69,4 @@ I watched this episode with high hopes after seeing it on so many people's "Favo
 
 ### Limitations
 
-This script implements issue #2's rules independently and does not import or reuse `scripts/pre_data.py`. That file had been read during an earlier review, so this was not a strictly blind check. The examples were generated with `--seed 20261021` and are excerpts of about 200 characters; full review text is not reproduced because the dataset licence does not permit it. The counts do not depend on which examples are selected.
+This script implements issue #2's rules independently and does not import or reuse `scripts/pre_data.py`. That file had been read during an earlier review, so this was not a strictly blind check. The examples were generated with `--seed 20261021 --count 3` and are excerpts of about 200 characters; full review text is not reproduced because the dataset licence does not permit it. The counts do not depend on which examples are selected.

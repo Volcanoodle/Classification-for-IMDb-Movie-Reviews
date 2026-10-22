@@ -1,13 +1,14 @@
 """Check the text-cleaning rules described in issue #2.
 
 Reads the 50,000 labelled reviews, reports counts A-D, and prints
-three random before/after examples (E). By default no seed is used, so
-each run selects different examples; pass --seed for a reproducible
-sample.
+three random before/after examples (E), truncated to about 200
+characters by default. By default no seed is used, so each run selects
+different examples; pass --seed for a reproducible sample.
 
 Usage:
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py
     .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --seed 123
+    .venv/Scripts/python.exe -I scripts/check_text_cleaning.py --excerpt-chars 300
 """
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ DATA_DIR = ROOT / "data" / "raw" / "aclImdb"
 SPLITS = ("train", "test")
 LABELS = ("pos", "neg")
 WHITESPACE = re.compile(r"\s+")
+DEFAULT_EXCERPT_CHARS = 200
 
 
 def clean_text(text: str) -> str:
@@ -29,6 +31,34 @@ def clean_text(text: str) -> str:
     text = text.replace("<br />", " ")
     text = WHITESPACE.sub(" ", text)
     return text.strip()
+
+
+def first_difference(left: str, right: str) -> int:
+    """Return the index of the first character that differs."""
+    for index, (a, b) in enumerate(zip(left, right)):
+        if a != b:
+            return index
+    return min(len(left), len(right))
+
+
+def excerpt_at(text: str, start: int, limit: int) -> str:
+    """Return a window of roughly `limit` characters around `start`."""
+    start = max(0, start)
+    end = min(len(text), start + limit)
+    if start > 0:
+        space = text.find(" ", start)
+        if 0 <= space < start + 20:
+            start = space + 1
+    if end < len(text):
+        space = text.rfind(" ", start, end)
+        if space > start:
+            end = space
+    chunk = text[start:end]
+    if start > 0:
+        chunk = "[...] " + chunk
+    if end < len(text):
+        chunk = chunk + " [...]"
+    return chunk
 
 
 def review_files() -> list[Path]:
@@ -48,7 +78,15 @@ def main() -> None:
         default=None,
         help="Optional seed for reproducible example selection.",
     )
+    parser.add_argument(
+        "--excerpt-chars",
+        type=int,
+        default=DEFAULT_EXCERPT_CHARS,
+        help="Maximum characters shown per example (default: %(default)s).",
+    )
     args = parser.parse_args()
+    if args.excerpt_chars <= 0:
+        parser.error("--excerpt-chars must be positive")
 
     files = review_files()
     per_group = {(split, label): 0 for split in SPLITS for label in LABELS}
@@ -92,11 +130,20 @@ def main() -> None:
         after = clean_text(before)
         relative = path.relative_to(DATA_DIR)
         print()
+        if before == after:
+            start = 0
+            label = "excerpt; review unchanged"
+        else:
+            difference = first_difference(before, after)
+            start = 0 if difference < args.excerpt_chars else max(
+                0, difference - args.excerpt_chars // 2
+            )
+            label = "excerpt around the first change"
         print(f"--- Example {index}: {relative.as_posix()} ---")
-        print("BEFORE:")
-        print(before)
-        print("AFTER:")
-        print(after)
+        print(f"BEFORE ({label}, max {args.excerpt_chars} chars):")
+        print(excerpt_at(before, start, args.excerpt_chars))
+        print(f"AFTER ({label}, max {args.excerpt_chars} chars):")
+        print(excerpt_at(after, start, args.excerpt_chars))
 
 
 if __name__ == "__main__":

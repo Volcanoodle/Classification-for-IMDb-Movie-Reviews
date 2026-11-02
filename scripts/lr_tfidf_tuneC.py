@@ -24,7 +24,6 @@ N_FOLDS = 10
 SEED = 42
 C_VALUES = [0.1, 0.3, 1, 2, 3, 3.5, 4, 4.5, 5, 10, 30]
 
-
 def cross_val_mean(train, c):
     """Mean accuracy over the 10 folds for one C value."""
     y = train["label"].to_numpy()
@@ -37,7 +36,7 @@ def cross_val_mean(train, c):
         X_train = vectorizer.fit_transform(train.loc[~is_val, "text"])
         X_val = vectorizer.transform(train.loc[is_val, "text"])
 
-        model = LogisticRegression(max_iter=1000, C=c)
+        model = LogisticRegression(max_iter=1000, C=c, random_state=SEED)
         model.fit(X_train, y[~is_val])
         scores.append(model.score(X_val, y[is_val]))
     return scores

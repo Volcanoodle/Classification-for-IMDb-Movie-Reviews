@@ -68,7 +68,7 @@ def cross_val_scores(train, kind, lowercase, use_stop_words, ngram_range):
         X_train = vectorizer.fit_transform(train.loc[~is_val, "text"])
         X_val = vectorizer.transform(train.loc[is_val, "text"])
 
-        model = LogisticRegression(max_iter=1000)
+        model = LogisticRegression(max_iter=1000, random_state=SEED)
         model.fit(X_train, y[~is_val])
         scores.append(model.score(X_val, y[is_val]))
     return scores

@@ -82,6 +82,13 @@ The 10-fold mean accuracy is 0.8770.
 - Accuracy 0.8770 is below the 0.93 threshold, so no leak investigation is
   needed.
 
+## Regularization
+
+Tuning `C` over {0.1, 0.3, 1.0, 3.0, 10.0, 30.0} shifted the 10-fold mean
+accuracy by at most 0.22 points (best `C=3.0`, 0.8792, vs. the default `C=1.0`,
+0.8770), so the default is already near-optimal. See
+`scripts/lr_tfidf_tuneC.py`.
+
 ## How a check is recorded
 
 Run the script and paste the ten fold-accuracy lines into an issue or comment.

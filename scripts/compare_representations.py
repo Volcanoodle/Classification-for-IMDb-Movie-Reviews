@@ -14,6 +14,7 @@ folds only. The first row is exactly the anchor, so fold 0 must print 0.8655.
 
 Output:
     a table printed to stdout, one row per representation.
+
     representation                fold0   mean(10)
     ----------------------------------------------
     anchor  binary lower         0.8655     0.8651

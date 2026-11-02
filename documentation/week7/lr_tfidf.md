@@ -84,9 +84,10 @@ The 10-fold mean accuracy is 0.8770.
 
 ## Regularization
 
-Tuning `C` over {0.1, 0.3, 1.0, 3.0, 10.0, 30.0} shifted the 10-fold mean
-accuracy by at most 0.22 points (best `C=3.0`, 0.8792, vs. the default `C=1.0`,
-0.8770), so the default is already near-optimal. See
+Tuning `C` over {0.1, 0.3, 1, 2, 3, 3.5, 4, 4.5, 5, 10, 30} gives a flat
+plateau of about 0.879 for `C` in [2, 5] (best 0.8794 at `C=4.0`), only 0.24
+points above the default `C=1.0` (0.8770), so the default is essentially
+optimal and `C` is not a sensitive hyperparameter. See
 `scripts/lr_tfidf_tuneC.py`.
 
 ## How a check is recorded

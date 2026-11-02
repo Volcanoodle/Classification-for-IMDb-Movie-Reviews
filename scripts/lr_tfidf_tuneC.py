@@ -22,7 +22,7 @@ TRAIN_FILE = ROOT / "data" / "processed" / "train.csv"
 
 N_FOLDS = 10
 SEED = 42
-C_VALUES = [0.1, 0.3, 1.0, 3.0, 10.0, 30.0]
+C_VALUES = [0.1, 0.3, 1, 2, 3, 3.5, 4, 4.5, 5, 10, 30]
 
 
 def cross_val_mean(train, c):

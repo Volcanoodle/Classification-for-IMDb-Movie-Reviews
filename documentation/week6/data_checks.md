@@ -151,18 +151,3 @@ This script implements issue #2's rules independently and does not import or reu
 
 F and G are not printed by the script, but they are consistent with H: 24,902 − 123 = 24,779.
 
-
-## Additional checks 
-
-The checks above cover completeness and balance. Grouping by movie and reproducibility were checked separately, together with a few extra completeness checks.
-
-| Property | Check | Result |
-| --- | --- | --- |
-| Complete | missing or duplicated `review_id`, fold values, ids outside `train/` | 0 missing, 0 duplicated, folds 0-9 only, 0 outside `train/` |
-| Complete | same reviews and fold numbers as `data/processed/train.csv` | yes |
-| Balanced | share of positive reviews per fold | 0.502-0.503 |
-| Grouped by movie | movies in more than one fold | 0 of 3,425; 324-353 movies per fold, summing to 3,425 |
-| Reproducible | run `python scripts/pre_data.py`, then `git status` | `data/splits/train_folds.csv` unchanged |
-
-For the movie check, the movie id of review N was read again from line N (counting from 0) of the raw `urls_pos.txt` or `urls_neg.txt`, instead of taking the `movie_id` column produced by the pipeline. Both sources agree on every review.
-

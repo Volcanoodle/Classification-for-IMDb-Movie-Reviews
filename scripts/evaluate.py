@@ -17,8 +17,8 @@ def main():
         
     pred_df = pd.read_csv(pred_path)
     required_cols = ['review_id', 'prob']
-    if not all(col in pred_df.columns for col in required_cols):
-        print("Error: Prediction file must contain 'review_id' and 'prob' columns.")
+    if list(pred_df.columns) != required_cols:
+        print("Error: Prediction file must have exactly the columns 'review_id' and 'prob'.")
         sys.exit(1)
 
     train_path = "data/processed/train.csv"
@@ -33,6 +33,17 @@ def main():
         print("Error: 'fold' column not found in training data.")
         sys.exit(1)
     
+        # Refuse files that would silently give a wrong score
+    if pred_df['review_id'].duplicated().any():
+        print("Error: Some review_id appear more than once.")
+        sys.exit(1)
+    if not pred_df['review_id'].isin(train_df['review_id']).all():
+        print("Error: Some review_id are not in train.csv.")
+        sys.exit(1)
+    if pred_df['prob'].isna().any() or not pred_df['prob'].between(0, 1).all():
+        print("Error: Every prob must be a number between 0 and 1.")
+        sys.exit(1)
+
     # Merge predictions directly with train_df (which contains 'label' and 'fold')
     merged = pred_df.merge(train_df, on="review_id")
     
@@ -112,6 +123,12 @@ def main():
         })
     
     scores_df = pd.DataFrame(save_rows)
+    
+    if len(scores_df) > 1:
+        # Mean and sample standard deviation (n - 1) across folds
+        print("--- Across folds ---")
+        print(scores_df[['accuracy', 'precision', 'recall', 'f1', 'roc_auc']].agg(['mean', 'std']).round(4).to_string())
+    print("Confusion matrix over all folds:", scores_df[['tn', 'fp', 'fn', 'tp']].sum().to_dict())
     scores_df.to_csv(score_out_path, index=False)
     print(f"Saved scores to {score_out_path}")
 

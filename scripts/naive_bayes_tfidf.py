@@ -1,4 +1,3 @@
-# Initial code generated with ChatGPT.
 # Multinomial Naive Bayes with the shared TF-IDF representation.
 # Uses only the training set and its existing 10 folds.
 

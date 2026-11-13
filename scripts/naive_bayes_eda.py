@@ -1,4 +1,3 @@
-# Initial code generated with ChatGPT.
 # EDA: class distribution, review lengths, and word frequencies.
 # Only the processed training set is used. No model is trained.
 

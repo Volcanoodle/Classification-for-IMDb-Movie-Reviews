@@ -97,10 +97,11 @@ with its defaults otherwise.
 
 ## Findings
 
-- Word order helps the most: adding bigrams gives the largest improvement
-  (+2.4 points over the anchor).
-- TF-IDF > binary > count: TF-IDF weighting helps, while raw counts are worse
-  than a plain present/absent flag.
+- Word order helps most with binary features: adding bigrams raises the mean
+  accuracy by 2.4 points (paired t-test over the 10 folds, p < 0.001). With
+  TF-IDF the gain is only 0.25 points and not significant (p = 0.08).
+- TF-IDF beats binary by 1.2 points (p = 0.001). The difference between binary
+  and raw counts (0.47 points) is not significant (p = 0.10).
 - Removing stop words hurts, consistent with the "not" problem.
 - Lowercasing makes little difference.
 
@@ -108,4 +109,5 @@ with its defaults otherwise.
 
 Run the script and paste the full table into an issue or comment. The check
 passes when the anchor row prints `0.8655` and the remaining numbers match the
-table above to within rounding of the fourth decimal.
+table above to within about 0.001: logistic regression can differ by one or two
+reviews per fold between computers.

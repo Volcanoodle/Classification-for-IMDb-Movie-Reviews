@@ -38,6 +38,7 @@ from sklearn.linear_model import LogisticRegression
 
 ROOT = Path(__file__).resolve().parent.parent
 TRAIN_FILE = ROOT / "data" / "processed" / "train.csv"
+PRED_DIR = ROOT / "results" / "predictions"
 
 N_FOLDS = 10
 SEED = 42
@@ -57,9 +58,10 @@ def build_vectorizer(kind, lowercase, use_stop_words, ngram_range):
 
 
 def cross_val_scores(train, kind, lowercase, use_stop_words, ngram_range):
-    """Accuracy on each of the 10 folds for one representation."""
+    """Accuracy on each of the 10 folds and out-of-fold probabilities for one representation."""
     y = train["label"].to_numpy()
     scores = []
+    probs = np.full(len(train), np.nan)
     for fold in range(N_FOLDS):
         is_val = (train["fold"] == fold).to_numpy()
 
@@ -70,8 +72,9 @@ def cross_val_scores(train, kind, lowercase, use_stop_words, ngram_range):
 
         model = LogisticRegression(max_iter=1000, random_state=SEED)
         model.fit(X_train, y[~is_val])
+        probs[is_val] = model.predict_proba(X_val)[:, 1]
         scores.append(model.score(X_val, y[is_val]))
-    return scores
+    return scores, probs
 
 
 def main():
@@ -95,9 +98,15 @@ def main():
     print("-" * len(header))
 
     for label, kind, lowercase, stop, ngram in representations:
-        scores = cross_val_scores(train, kind, lowercase, stop, ngram)
+        scores, probs = cross_val_scores(train, kind, lowercase, stop, ngram)
         mean = float(np.mean(scores))
         print(f"{label:<26}{scores[0]:>9.4f}{mean:>11.4f}")
+        # One prediction file per representation, to be scored with scripts/evaluate.py
+        PRED_DIR.mkdir(parents=True, exist_ok=True)
+        name = "rep_" + "_".join(label.split())
+        pd.DataFrame({"review_id": train["review_id"], "prob": probs}).to_csv(
+            PRED_DIR / f"{name}.csv", index=False, lineterminator="\n"
+        )
 
 
 if __name__ == "__main__":

@@ -6,10 +6,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python scripts/evaluate.py results/predictions/NAME.csv")
+        print("Usage: python scripts/evaluate.py results/predictions/NAME.csv [--test]")
         sys.exit(1)
 
     pred_path = sys.argv[1]
+    # --test scores predictions for the official test set instead of the training folds
+    use_test = "--test" in sys.argv[2:]
     
     if not os.path.exists(pred_path):
         print(f"Error: Prediction file '{pred_path}' not found.")
@@ -21,13 +23,17 @@ def main():
         print("Error: Prediction file must have exactly the columns 'review_id' and 'prob'.")
         sys.exit(1)
 
-    train_path = "data/processed/train.csv"
+    train_path = "data/processed/test.csv" if use_test else "data/processed/train.csv"
     
     if not os.path.exists(train_path):
         print(f"Error: Processed training file not found at {train_path}. Did you run pre_data.py?")
         sys.exit(1)
         
     train_df = pd.read_csv(train_path)
+    if use_test:
+        # The official test set has no folds: score it as one block
+        print("Scoring the official TEST set")
+        train_df['fold'] = 'test'
     
     if 'fold' not in train_df.columns:
         print("Error: 'fold' column not found in training data.")
@@ -38,7 +44,7 @@ def main():
         print("Error: Some review_id appear more than once.")
         sys.exit(1)
     if not pred_df['review_id'].isin(train_df['review_id']).all():
-        print("Error: Some review_id are not in train.csv.")
+        print(f"Error: Some review_id are not in {train_path}.")
         sys.exit(1)
     if pred_df['prob'].isna().any() or not pred_df['prob'].between(0, 1).all():
         print("Error: Every prob must be a number between 0 and 1.")
@@ -96,9 +102,10 @@ def main():
         print(f"ROC-AUC:   {auc:.4f}\n")
 
     # Save per-fold scores to results/scores/NAME.csv
-    os.makedirs("results/scores", exist_ok=True)
+    score_dir = "results/scores/test" if use_test else "results/scores"
+    os.makedirs(score_dir, exist_ok=True)
     base_name = os.path.basename(pred_path)
-    score_out_path = os.path.join("results/scores", base_name)
+    score_out_path = os.path.join(score_dir, base_name)
     
     save_rows = []
     for r in fold_results:

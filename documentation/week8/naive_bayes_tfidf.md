@@ -9,7 +9,8 @@
 - Validation: the existing 10 folds, grouped by movie.
 - The vocabulary and IDF weights are fitted on the nine training folds in each iteration.
 - Shuffled-label check: seed 42.
-- The test set is not used.
+- The test set is not used for cross-validation or configuration selection.
+  The separate `--test` mode is described below.
 
 ## Results
 
@@ -90,6 +91,75 @@ Observed training-command runtimes on the author's laptop:
 
 These times cover the complete training commands. Evaluation is separate.
 Runtime may differ between laptops.
+
+## Official test predictions
+
+For Issue #8, run the following command from the repository root after
+finalising the configuration using the training folds:
+
+```powershell
+.\.venv\Scripts\python.exe -u scripts/naive_bayes_tfidf.py --test
+```
+
+This mode fits the vocabulary, IDF weights and classifier on all 24,779
+training reviews. It ignores the training `fold` column. It then reads only
+`review_id` and `text` from `data/processed/test.csv` and transforms the test
+text using the fitted training vectorizer. Test labels are not read, and no
+test metrics are computed or printed.
+
+The final settings are unchanged from cross-validation:
+
+| Setting | Value |
+| --- | --- |
+| Classifier | `MultinomialNB(alpha=1.0)` |
+| Representation | TF-IDF |
+| Lowercase | `True` |
+| N-grams | `(1, 1)` |
+| Stop words | `None` (kept) |
+| Project seed | `SEED = 42` |
+
+The vectorizer and Multinomial Naive Bayes are deterministic and do not
+take a `random_state` parameter. This classifier has no iterative stopping
+parameter or early stopping. No settings are tuned or selected in this mode.
+
+The output is `results/test_predictions/mnb_tfidf.csv`, with exactly
+25,000 rows and the columns `review_id,prob`. Each test review appears
+once in its original order. `prob` is column 1 of `predict_proba`, the
+probability of positive sentiment, and must be finite and between 0 and 1.
+
+`--test` and `--shuffle-labels` are mutually exclusive. Passing both causes
+an argument error before any data are loaded. Without `--test`, the original
+cross-validation and shuffled-label commands retain their existing behaviour.
+
+The full `--test` command took **7.67 seconds** in the local environment
+listed above on 17 November 2026. This includes interpreter startup,
+loading, fitting, prediction and writing the CSV; timing varies by laptop.
+
+Keep the generated test predictions local until the joint test run.
+Do not stage or commit anything under `results/test_predictions/` before
+that run. Test scoring is reserved for the joint evaluation.
+
+### Local verification
+
+On 17 November 2026, the normal and shuffled-label CV commands reproduced
+the committed predictions, with accuracies of 0.8292 and 0.4840 respectively.
+CSV content matched exactly after normalising Windows line endings.
+The test output passed the row-count, column, ID and probability checks.
+Running with training folds and test labels physically absent also produced
+a byte-identical test prediction file on the same machine. The incompatible
+flag combination exited with argument-error status 2.
+
+### Independent test-mode check
+
+Person D runs `--test` on another laptop with the same configuration and
+records the commit, package versions, command and elapsed time in
+`documentation/week8/check_naive_bayes_tfidf.md`.
+
+Check the output column names, 25,000 rows, unique IDs matching the official
+test set, and finite probabilities in [0, 1]. Compare the two prediction
+files by `review_id`; probabilities rounded to six decimal places must
+match. This independent laptop check is pending and must include actual
+observations.
 
 ## Expected fold accuracies
 

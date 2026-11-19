@@ -12,3 +12,7 @@ scikit-learn==1.9.1
 # Tools to run the notebook
 jupyterlab==4.6.4
 ipykernel==7.4.0
+
+# Neural networks. A plain pip install gives the CPU build on Windows.
+# NVIDIA GPU: pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu130
+torch==2.14.1

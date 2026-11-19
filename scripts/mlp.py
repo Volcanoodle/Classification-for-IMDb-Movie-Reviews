@@ -32,6 +32,8 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 ROOT = Path(__file__).resolve().parent.parent
 TRAIN_FILE = ROOT / "data" / "processed" / "train.csv"
 PRED_DIR = ROOT / "results" / "predictions"
+TEST_FILE = ROOT / "data" / "processed" / "test.csv"
+TEST_PRED_DIR = ROOT / "results" / "test_predictions"
 
 N_FOLDS = 10
 SEED = 42
@@ -102,7 +104,9 @@ def run_fold(texts_train, y_train, texts_val, y_val, args):
             loss.backward()
             optimizer.step()
 
-        line = f"  epoch {epoch:2d}: val accuracy {accuracy(model, X_val, y_val):.4f}"
+        line = f"  epoch {epoch:2d}"
+        if y_val is not None:   # None in test mode: the test labels are never read
+            line += f": val accuracy {accuracy(model, X_val, y_val):.4f}"
         if args.n_train:
             line += f", train accuracy {accuracy(model, X_train, y_train):.4f}"
         print(line, flush=True)
@@ -124,7 +128,11 @@ def main():
     parser.add_argument("--n-train", type=int, default=0,
                         help="train on only this many reviews; train accuracy should reach about 100%%")
     parser.add_argument("--save", metavar="NAME", help="write results/predictions/NAME.csv")
+    parser.add_argument("--test", action="store_true",
+                        help="train on all training reviews and write results/test_predictions/NAME.csv")
     args = parser.parse_args()
+    if args.test and not args.save:
+        parser.error("--test needs --save NAME")
 
     train = pd.read_csv(TRAIN_FILE)
     y_true = train["label"].to_numpy(dtype=np.float32)
@@ -133,6 +141,20 @@ def main():
     folds = range(N_FOLDS) if args.folds == "all" else [int(args.folds)]
 
     print(f"device {DEVICE}; {vars(args)}")
+
+    if args.test:
+        # Only the ids and texts are read: the test labels stay unopened
+        test = pd.read_csv(TEST_FILE, usecols=["review_id", "text"])
+        print(f"test mode: train on all {len(train)} reviews, predict {len(test)} test reviews", flush=True)
+        probs = run_fold(train["text"], y_fit, test["text"], None, args)
+        TEST_PRED_DIR.mkdir(parents=True, exist_ok=True)
+        out_file = TEST_PRED_DIR / f"{args.save}.csv"
+        pd.DataFrame({"review_id": test["review_id"], "prob": probs}).to_csv(
+            out_file, index=False, lineterminator="\n"
+        )
+        print("Saved", out_file.relative_to(ROOT))
+        return
+
     probs = np.full(len(train), np.nan)
     for fold in folds:
         is_val = (train["fold"] == fold).to_numpy()

@@ -78,7 +78,7 @@ def main():
                 elapsed = perf_counter() - start
                 y_pred = (probs > 0.5).astype(int)
                 overall_accuracy = (y_pred == y_true).mean()
-                print(f"Total training time = {elapsed:.3f}\nOverall Accuracy = {overall_accuracy:.4f}\n")
+                print(f"Total training time = {elapsed:.3f}s\nOverall Accuracy = {overall_accuracy:.4f}\n")
 
                 if (overall_accuracy > best_accuracy):
                     best_accuracy = overall_accuracy

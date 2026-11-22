@@ -97,14 +97,14 @@ def main():
         model.fit(x_train, y_fit)
 
         elapsed = perf_counter() - start
-        print(f"Training time: {elapsed:.3f}", flush=True)
+        print(f"Training time: {elapsed:.3f}s", flush=True)
         
         start = perf_counter()
         
         probs = model.predict_proba(x_test)[:, 1]
         
         elapsed = perf_counter() - start
-        print(f"Predicting time: {elapsed:.3f}", flush=True)
+        print(f"Predicting time: {elapsed:.3f}s", flush=True)
 
         out_dir = TEST_PRED_DIR
         out_dir.mkdir(parents=True, exist_ok=True)

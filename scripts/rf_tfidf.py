@@ -96,15 +96,10 @@ def main():
 
         model.fit(x_train, y_fit)
 
-        elapsed = perf_counter() - start
-        print(f"Training time: {elapsed:.3f}s", flush=True)
-        
-        start = perf_counter()
-        
         probs = model.predict_proba(x_test)[:, 1]
         
         elapsed = perf_counter() - start
-        print(f"Predicting time: {elapsed:.3f}s", flush=True)
+
 
         out_dir = TEST_PRED_DIR
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -124,7 +119,12 @@ def main():
         # overall_accuracy = (y_pred == test_y_true).mean()
         # print(f"Overall accuracy: {overall_accuracy:.4f}", flush=True)
 
+        elapsed = perf_counter() - start
+        print(f"Time elapsed = {elapsed:.3f}s", flush=True)
+
     else:
+        start = perf_counter()
+
         train = pd.read_csv(
             TRAIN_FILE,
             usecols=["review_id", "text", "label", "fold"],
@@ -177,6 +177,9 @@ def main():
     
         print(f"Overall accuracy: {overall_accuracy:.4f}", flush=True)
         print("Results saved to", out_file.relative_to(ROOT))
+        
+        elapsed = perf_counter() - start
+        print(f"Time elapsed = {elapsed:.3f}s", flush=True)
 
 
 if __name__ == "__main__":

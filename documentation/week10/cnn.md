@@ -89,8 +89,16 @@ towards "positive" (recall 0.907, precision 0.857).
 
 ## How a check is recorded
 
-Run `.venv\Scripts\python.exe scripts\cnn.py --epochs 6` and comment on the
-issue with the epoch-6 line and whether you used a CPU or a GPU (name it).
-The check passes when it matches 0.8842 (GPU) or 0.8821 (CPU) to the fourth
-decimal. A different CPU model can differ in the last digits: then write down
-your number and your CPU instead of calling it a failure.
+The CNN is not re-run on each member's laptop. It is run once more, in the
+group's joint test-set run, with the settings chosen above:
+
+- `.venv\Scripts\python.exe scripts\cnn.py --test --epochs 6 --save cnn`
+- `.venv\Scripts\python.exe scripts\evaluate.py results\test_predictions\cnn.csv --test`
+
+`--test` trains on all 24,779 training reviews and writes
+`results/test_predictions/NAME.csv`. Give `--epochs 6` every time: the
+default is 10.
+
+Anyone who wants to reproduce a training run can still use
+`.venv\Scripts\python.exe scripts\cnn.py --epochs 6`: epoch 6 should print
+0.8842 on a GPU or 0.8821 on a CPU.

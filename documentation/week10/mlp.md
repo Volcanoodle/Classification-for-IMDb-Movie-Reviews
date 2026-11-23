@@ -83,8 +83,17 @@ On the same input, the hidden layer gives no reliable gain; word pairs give a cl
 
 ## How a check is recorded
 
-Run step 1 (`tfidf` only) and comment on the issue with the epoch-8 line and
-whether you used a CPU or a GPU (name it). The check passes when the line
-matches 0.8789 (GPU) or 0.8773 (CPU) to the fourth decimal. A different CPU
-model can differ in the last digits: then write down your number and your CPU
-instead of calling it a failure.
+The MLP is not re-run on each member's laptop. It is run once more, in the
+group's joint test-set run, with the settings chosen above:
+
+- `.venv\Scripts\python.exe scripts\mlp.py --test --epochs 8 --save mlp_tfidf`
+- `.venv\Scripts\python.exe scripts\mlp.py --test --rep tfidf-bigram --epochs 6 --save mlp_tfidf_bigram`
+- `.venv\Scripts\python.exe scripts\evaluate.py results\test_predictions\mlp_tfidf.csv --test`,
+  and the same for `mlp_tfidf_bigram.csv`
+
+`--test` trains on all 24,779 training reviews and writes
+`results/test_predictions/NAME.csv`. Give `--epochs` every time: the default
+is 10, not the number chosen on fold 0.
+
+Anyone who wants to reproduce a training run can still use step 1: epoch 8
+should print 0.8789 on a GPU or 0.8773 on a CPU.

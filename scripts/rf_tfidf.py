@@ -4,7 +4,7 @@ Random forest classifier using lowercase unigram TF-IDF with no stop-word remova
 Outputs:
     results/predictions/rf_tfidf.csv
     results/predictions/rf_tfidf_shuffled.csv   (--shuffle-labels)
-    results/predictions/test/rf_tfidf.csv       (--test)
+    results/test_predictions/rf_tfidf.csv       (--test)
 
 Usage:
     python scripts/rf_tfidf.py

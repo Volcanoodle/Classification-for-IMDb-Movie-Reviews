@@ -11,7 +11,7 @@ the sentiment classification task.
 | Setting | Value |
 | --- | --- |
 | Vectorizer | `TfidfVectorizer(lowercase=True, ngram_range=(1, 1), stop_words=None)` |
-| Classifier | `LogisticRegression(max_iter=1000)` (defaults otherwise) |
+| Classifier | `LogisticRegression(max_iter=1000, random_state=42)` (defaults otherwise) |
 | Folds | 10, from `data/splits/train_folds.csv` (seed 42, fixed) |
 | Label | `label` column; `rating` is never an input |
 
@@ -46,6 +46,23 @@ output is identical every time because the data, folds and seed are fixed.
 This trains on randomly shuffled labels. Accuracy must fall to about 50%;
 otherwise the model is leaking.
 
+### Test-set mode
+
+```powershell
+.venv\Scripts\python.exe scripts\lr_tfidf.py --test
+```
+
+This fits the vectorizer and the classifier on all 24,779 training reviews (the
+`fold` column is ignored) with the default settings above and `SEED = 42`, then
+transforms `data/processed/test.csv` with the vectorizer learnt from the
+training set. It writes `results/test_predictions/lr_tfidf.csv` with columns
+`review_id, prob` (25,000 rows).
+
+In this mode only `review_id` and `text` are read from the test set: the test
+labels stay unseen, nothing is fitted on test text, and no test score is
+computed or printed. `--test` cannot be combined with `--shuffle-labels`. Do
+not commit `results/test_predictions/lr_tfidf.csv` before the joint test run.
+
 ## Dependencies
 
 - Python 3.14.7
@@ -55,7 +72,8 @@ otherwise the model is leaking.
 
 ## How long it takes
 
-About a minute on a laptop (ten folds, each a few seconds).
+About a minute on a laptop (ten folds, each a few seconds). The `--test` mode
+takes about 10 seconds (one fit on the full training set).
 
 ## Expected output
 
@@ -74,6 +92,12 @@ Saved results\predictions\lr_tfidf.csv
 ```
 
 The 10-fold mean accuracy is 0.8770.
+
+Expected output of `--test`:
+
+```
+Saved results\test_predictions\lr_tfidf.csv
+```
 
 ## Sanity checks
 
@@ -95,3 +119,8 @@ optimal and `C` is not a sensitive hyperparameter. See
 Run the script and paste the ten fold-accuracy lines into an issue or comment.
 The check passes when the lines match the table above to the fourth decimal and
 `lr_tfidf.csv` is written.
+
+For `--test`, the checker runs the command on their laptop and compares the
+file with the owner's: the same 25,000 `review_id`s in the same order, and
+probabilities equal to 6 decimal places. The file itself is not committed
+before the joint test run.

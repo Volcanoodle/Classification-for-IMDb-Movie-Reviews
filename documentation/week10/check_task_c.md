@@ -82,13 +82,33 @@ All differences are ≤ 0.0061 and the qualitative findings are unchanged:
 
 **Request to the owner:** state a tolerance in `clustering_r2.md` (for example, ARI/NMI/silhouette within ±0.01 and positive-ratio ranges within ±0.01) so that this check has a pass/fail rule. The current document gives no tolerance.
 
-## 4. Figure
+## 4. Hyperparameter tuning table — exact match
+
+The checker re-ran `scripts/dt_tfidf_tune.py` on 2026-11-23; it took about 27 minutes on this laptop. All twelve configurations match the owner's table to four decimal places.
+
+| max_depth | min_samples_leaf | Accuracy (owner) | Accuracy (checker) | ROC-AUC (owner) | ROC-AUC (checker) |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | 5 | 0.7170 ± 0.0075 | 0.7170 ± 0.0075 | 0.7730 | 0.7730 |
+| 10 | 10 | 0.7199 ± 0.0078 | 0.7199 ± 0.0078 | 0.7773 | 0.7773 |
+| 10 | 20 | 0.7216 ± 0.0083 | 0.7216 ± 0.0083 | 0.7830 | 0.7830 |
+| 20 | 5 | 0.7188 ± 0.0077 | 0.7188 ± 0.0077 | 0.7567 | 0.7567 |
+| 20 | 10 | 0.7220 ± 0.0100 | 0.7220 ± 0.0100 | 0.7772 | 0.7772 |
+| **20** | **20** | **0.7259 ± 0.0115** | **0.7259 ± 0.0115** | **0.7908** | **0.7908** |
+| 30 | 5 | 0.7135 ± 0.0081 | 0.7135 ± 0.0081 | 0.7467 | 0.7467 |
+| 30 | 10 | 0.7160 ± 0.0099 | 0.7160 ± 0.0099 | 0.7713 | 0.7713 |
+| 30 | 20 | 0.7207 ± 0.0097 | 0.7207 ± 0.0097 | 0.7862 | 0.7862 |
+| 50 | 5 | 0.7039 ± 0.0093 | 0.7039 ± 0.0093 | 0.7393 | 0.7393 |
+| 50 | 10 | 0.7089 ± 0.0097 | 0.7089 ± 0.0097 | 0.7662 | 0.7662 |
+| 50 | 20 | 0.7178 ± 0.0083 | 0.7178 ± 0.0083 | 0.7842 | 0.7842 |
+
+The best configuration is the same: `max_depth=20, min_samples_leaf=20`, with mean accuracy 0.7258903, sample standard deviation 0.0114975 and mean ROC-AUC 0.7908089.
+
+## 5. Figure
 
 `documentation/week10/figures/clustering_r2.png` differs at the byte level (669,702 → 679,918 bytes). This is expected from different matplotlib/font rendering and does not affect the numeric check. The figure was not part of the pass/fail comparison.
 
 ## Not run
 
-- `scripts/dt_tfidf_tune.py`: the 12-configuration tuning table was not re-run in this check. The final tree's settings (`max_depth=20`, `min_samples_leaf=20`) do reproduce exactly, but the tuning table remains unverified.
 - `scripts/dt_tfidf.py --test`: deliberately not re-run. The team rule is that `test.csv` is scored once for the final table with the group present. Whether the committed `results/predictions/test/dt_tfidf.csv` is that official run should be confirmed by the group.
 
 ## Documentation gaps found
@@ -102,5 +122,6 @@ All differences are ≤ 0.0061 and the qualitative findings are unchanged:
 ## Verdict
 
 - **Decision tree (normal and shuffled labels): pass, exact.** Predictions and scores are identical.
+- **Hyperparameter tuning table: pass, exact.** All twelve configurations match to four decimal places.
 - **Clustering: pass within a ±0.01 tolerance.** All differences are ≤ 0.0061 and the conclusions are unchanged; the owner should state the tolerance explicitly.
 - **Documentation: changes requested** (the five gaps above) before the work is merged.

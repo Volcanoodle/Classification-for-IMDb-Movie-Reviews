@@ -50,7 +50,7 @@ def main():
     parser.add_argument(
         "--n-estimators",
         type=int,
-        default=500
+        default=500,
     )
     parser.add_argument(
         "--max-depth",
@@ -62,6 +62,12 @@ def main():
         type=int,
         default=2,
     )
+    parser.add_argument(
+        "--ngram-max",
+        type=int,
+        default=3,
+    )
+
     args = parser.parse_args()
 
     if args.test:
@@ -79,7 +85,7 @@ def main():
 
         vectorizer = TfidfVectorizer(
             lowercase=True,
-            ngram_range=(1, 1),
+            ngram_range=(1, args.ngram_max),
             stop_words=None,
         )
         
@@ -141,7 +147,7 @@ def main():
 
             vectorizer = TfidfVectorizer(
                 lowercase=True,
-                ngram_range=(1, 1),
+                ngram_range=(1, args.ngram_max),
                 stop_words=None,
             )
             

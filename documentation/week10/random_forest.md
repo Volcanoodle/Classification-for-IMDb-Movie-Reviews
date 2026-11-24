@@ -14,7 +14,7 @@
 - run time for rf_tfidf.py --shuffle-labels: 398.769s
 ## Hyperparameter Tuning (`rf_tfidf_tune.py`)
 3 hyperparameters to be tuned:
-- ngram_max: decides the ngram range, that is, how long a phrase will be taken into consideration, candidates: [1, 2, 3], making candidates ngram_range [(1,1 ), (1, 2), (1, 3)]
+- ngram_max: decides the ngram range, that is, how many consecutive words will be taken into consideration, candidates: [1, 2, 3], making candidates ngram_range [(1,1 ), (1, 2), (1, 3)]
 - n_estimators: decides how many dicision trees, candidates: [50, 100, 300, 500]
 - max_depth: decides max depth of each tree, candidates: [10, 20, 50, 100, 200, 300]
 - min_samples_leaf: decides how small a group of training samples a split is allowed to create, candidates: [1, 2, 5, 10, 20, 40]

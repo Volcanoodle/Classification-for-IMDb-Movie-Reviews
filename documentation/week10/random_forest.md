@@ -26,20 +26,7 @@ each combination of these 4 hyperparameters are used to train the same 10 folds,
 - min_samples_leaf = 2
 - overall accuracy = 0.8675
 ## Expected Results
-accuracy by rf_idf.py:
-fold 0: accuracy 0.8599
-fold 1: accuracy 0.8826
-fold 2: accuracy 0.8558
-fold 3: accuracy 0.8788
-fold 4: accuracy 0.8747
-fold 5: accuracy 0.8648
-fold 6: accuracy 0.8653
-fold 7: accuracy 0.8660
-fold 8: accuracy 0.8655
-fold 9: accuracy 0.8612
-Overall accuracy: 0.8675
-Results saved to results\predictions\rf_tfidf.csv
-Time elapsed = 588.420s
+
 |  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | average |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `no argument` | 0.8599 | 0.8826 | 0.8558 | 0.8788 | 0.8747 | 0.8648 | 0.8653 | 0.8660 | 0.8655 | 0.8612 | 0.8675 |

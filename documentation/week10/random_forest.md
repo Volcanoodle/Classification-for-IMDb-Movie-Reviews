@@ -35,7 +35,7 @@ each combination of these 4 hyperparameters are used to train the same 10 folds,
 accuracy of shuffled labels is approxiamtely .5, so there is no leakage
 
 ### Evaluation
-on rf_idf.csv:
+on rf_tfidf.csv:
 
 | fold | accuracy | precision | recall | f1 | roc_auc |
 | --- | --- | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ Confusion Matrix (TN / FP / FN / TP): 10686 / 1650 / 1634 / 10809
 
 ---
 
-on rf_idf_shuffled.csv:
+on rf_tfidf_shuffled.csv:
 
 | fold | accuracy | precision | recall | f1 | roc_auc |
 | --- | --- | --- | --- | --- | --- |

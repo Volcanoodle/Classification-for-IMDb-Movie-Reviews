@@ -178,18 +178,18 @@ Representation findings, from logistic regression on the same folds:
 
 ## Official test-set results
 
-*Pending: filled in after the joint test-set run. Each model is retrained on all 24,779 training reviews and scored once on the 25,000 test reviews.*
+Each model's chosen setting is retrained on all 24,779 training reviews and scored once on the 25,000 test reviews, in one joint run on 25 November 2026. Scores: [`results/scores/test/`](results/scores/test).
 
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
 | --- | --- | --- | --- | --- | --- |
-| MLP, TF-IDF + word pairs | | | | | |
-| MLP, TF-IDF | | | | | |
-| 1D-CNN | | | | | |
-| Logistic regression | | | | | |
-| Random forest | | | | | |
-| Random forest, 1–3 word n-grams | | | | | |
-| Naive Bayes | | | | | |
-| Decision tree | | | | | |
+| MLP, TF-IDF + word pairs | 0.9032 | 0.8995 | 0.9078 | 0.9036 | 0.9659 |
+| MLP, TF-IDF | 0.8868 | 0.8925 | 0.8796 | 0.8860 | 0.9553 |
+| 1D-CNN | 0.8836 | 0.8818 | 0.8859 | 0.8839 | 0.9531 |
+| Logistic regression | 0.8820 | 0.8815 | 0.8827 | 0.8821 | 0.9526 |
+| Random forest | 0.8492 | 0.8483 | 0.8506 | 0.8495 | 0.9267 |
+| Random forest, 1–3 word n-grams | 0.8683 | 0.8702 | 0.8658 | 0.8680 | 0.9423 |
+| Naive Bayes | 0.8322 | 0.8680 | 0.7836 | 0.8236 | 0.9153 |
+| Decision tree | 0.7296 | 0.7138 | 0.7666 | 0.7392 | 0.7943 |
 
 ## Error analysis
 

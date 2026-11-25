@@ -200,7 +200,15 @@ Each model's chosen setting is retrained on all 24,779 training reviews and scor
 
 ## Error analysis
 
-*Pending: which reviews every model gets wrong, and why (sarcasm, mixed opinions, plot summaries).*
+The out-of-fold predictions of six models (Naive Bayes, logistic regression, decision tree, random forest, MLP on TF-IDF, 1D-CNN) are compared on the 24,779 training reviews. All six are wrong on 718 reviews (2.9%): 426 negative reviews predicted positive and 292 positive reviews predicted negative. About 30 reviews per label were read by hand. The main causes:
+
+* One strong compliment or complaint outweighs the rest of the review.
+* The meaning sits in a phrase longer than one word, such as "Until the very end, I would have given 9 out of 10 stars"; most models use single words.
+* Sarcasm.
+* The praise or criticism is about another work, such as the stage musical that a film adapts.
+* Some labels look wrong: one review labelled negative says "I loved the movie".
+
+Details: [`documentation/week10/error_analysis.md`](documentation/week10/error_analysis.md). The 718 reviews: [`results/predictions/error_finder.csv`](results/predictions/error_finder.csv), from [`scripts/error_finder.py`](scripts/error_finder.py).
 
 ## Reproducing the results
 

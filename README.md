@@ -232,7 +232,16 @@ The leakage check is `--shuffle-labels` on any model script. Test runs write `re
 
 ## Use of generative AI
 
-*To be completed by each member: the tool, what it was used for, and where the full prompt is cited in the code.*
+Some group members used AI coding assistants during development: Claude Opus, ChatGPT and DeepSeek. Typical prompts included:
+
+* checking the Git status;
+* advice on Git version control;
+* modifying code;
+* writing plotting scripts;
+* explaining what a script does and how it works in detail;
+* checking whether the work meets the coursework requirements;
+* translating the coursework instructions;
+* listing algorithms that might be useful.
 
 ## Citation
 

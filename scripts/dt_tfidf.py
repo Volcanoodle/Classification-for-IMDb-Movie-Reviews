@@ -5,7 +5,7 @@ no stop-word removal, unigram), tuned to max_depth=20 and min_samples_leaf=20.
 Outputs:
     results/predictions/dt_tfidf.csv
     results/predictions/dt_tfidf_shuffled.csv   (--shuffle-labels)
-    results/predictions/test/dt_tfidf.csv       (--test)
+    results/test_predictions/dt_tfidf.csv       (--test)
 
 Usage:
     python scripts/dt_tfidf.py
@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 TRAIN_FILE = ROOT / "data" / "processed" / "train.csv"
 TEST_FILE = ROOT / "data" / "processed" / "test.csv"
 PRED_DIR = ROOT / "results" / "predictions"
+TEST_PRED_DIR = ROOT / "results" / "test_predictions"
 
 N_FOLDS = 10
 SEED = 42
@@ -61,8 +62,8 @@ def main():
         )
         model.fit(X_train, y_fit)
         probs = model.predict_proba(X_test)[:, 1]
-
-        out_dir = PRED_DIR / "test"
+        out_dir = TEST_PRED_DIR
+            
         out_dir.mkdir(parents=True, exist_ok=True)
         out_file = out_dir / "dt_tfidf.csv"
         pd.DataFrame({"review_id": test["review_id"], "prob": probs}).to_csv(

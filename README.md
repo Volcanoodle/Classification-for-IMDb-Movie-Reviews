@@ -120,20 +120,22 @@ python scripts/compare.py results/scores/lr_tfidf.csv results/scores/mlp_tfidf.c
 
 ## R2: Data analysis and exploration
 
+**Input:** the 24,779 training reviews. **Output:** statistics, figures and cluster labels.
+
 ### Exploratory analysis
 
-* The 24,779 training reviews cover 3,425 movies and are balanced: 49.8% negative, 50.2% positive.
-* Lengths are right-skewed: the median review has 173 words and 95% have at most 593. The 1D-CNN therefore reads the first 600 words.
-* "good" is frequent in both classes, and standard stop-word lists delete "not". The classical models therefore keep stop words.
-* Reviews of the same movie usually agree: 77% of movies with at least 5 reviews have at least 80% of their reviews with the same label. Folds are therefore grouped by movie. With random folds, the same baseline scores 87.9% instead of 86.5%, a 1.4-point gain from recognising movies.
+* 3,425 movies; balanced classes (49.8% negative).
+* Median 173 words, 95% at most 593, so the 1D-CNN reads the first 600.
+* Stop-word lists delete "not", so the classical models keep stop words.
+* Reviews of one movie usually share a label, so folds are grouped by movie.
 
 ![Review length distribution](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/0f0877e4f4a16abe2190dab61279847bdec33499/documentation/week6/figures/review_length_distribution.png?raw=true)
 
-Details: [`documentation/week6/naive_bayes_eda.md`](documentation/week6/naive_bayes_eda.md) (figures in `documentation/week6/figures/`), and the data checks in [`data_checks.md`](documentation/week6/data_checks.md) and [`check_folds.md`](documentation/week6/check_folds.md).
+Details: [`naive_bayes_eda.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week6/naive_bayes_eda.md), [`data_checks.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week6/data_checks.md), [`check_folds.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week6/check_folds.md).
 
 ### Clustering
 
-TF-IDF vectors are reduced to 50 LSA components and clustered with K-Means and EM (Gaussian mixture) at k = 2 and k = 6.
+K-Means and EM on 50 LSA components of TF-IDF, k = 2 and 6.
 
 | Algorithm | k | ARI vs sentiment | NMI vs sentiment | Silhouette |
 | --- | --- | --- | --- | --- |
@@ -142,40 +144,38 @@ TF-IDF vectors are reduced to 50 LSA components and clustered with K-Means and E
 | K-Means | 6 | 0.0094 | 0.0113 | 0.0399 |
 | EM (GMM) | 6 | 0.0019 | 0.0032 | -0.0320 |
 
-Reviews do not group by sentiment (ARI at most 0.023). At k = 6 the clusters follow writing style instead, such as plot summaries centred on "he" or "she", and "movie" versus "film".
+Clusters do not follow sentiment (ARI at most 0.023); at k = 6 they follow writing style.
 
 ![Clustering on 50 LSA components](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/0f0877e4f4a16abe2190dab61279847bdec33499/documentation/week10/figures/clustering_r2.png?raw=true)
 
-Details: [`documentation/week10/clustering_r2.md`](documentation/week10/clustering_r2.md).
+Details: [`clustering_r2.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/clustering_r2.md).
 
 ## R3: Baseline training and evaluation
 
-All four classical models use the same representation, chosen in [`documentation/week8/representation_comparison.md`](documentation/week8/representation_comparison.md): `TfidfVectorizer(lowercase=True, ngram_range=(1, 1), stop_words=None)`.
+**Input:** each review as a TF-IDF vector of single words, `TfidfVectorizer(lowercase=True, ngram_range=(1, 1), stop_words=None)`, chosen in [`representation_comparison.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week8/representation_comparison.md); the second random forest uses 1–3 word n-grams. **Output:** the probability that the review is positive; 0.5 is the threshold.
 
 | Model | Setting | Accuracy (10 folds) | F1 | ROC-AUC | Documentation |
 | --- | --- | --- | --- | --- | --- |
-| Logistic regression | `max_iter=1000`, C = 1.0 | 0.8770 ± 0.0071 | 0.8779 | 0.9474 | [`lr_tfidf.md`](documentation/week8/lr_tfidf.md) |
-| Random forest | 500 trees, `max_depth=200`, `min_samples_leaf=2` | 0.8495 ± 0.0079 | 0.8508 | 0.9251 | [`random_forest.md`](documentation/week10/random_forest.md) |
-| Random forest, 1–3 word n-grams | 500 trees, `max_depth=200`, `min_samples_leaf=2`, `--ngram-max 3` | 0.8675 ± 0.0086 | 0.8681 | 0.9393 | [`random_forest.md`](documentation/week10/random_forest.md) |
-| Multinomial Naive Bayes | `alpha=1.0` | 0.8292 ± 0.0091 | 0.8218 | 0.9140 | [`naive_bayes_tfidf.md`](documentation/week8/naive_bayes_tfidf.md) |
-| Decision tree | `max_depth=20`, `min_samples_leaf=20` | 0.7259 ± 0.0115 | 0.7397 | 0.7908 | [`dt_tfidf.md`](documentation/week10/dt_tfidf.md) |
+| Logistic regression | `max_iter=1000`, C = 1.0 | 0.8770 ± 0.0071 | 0.8779 | 0.9474 | [`lr_tfidf.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week8/lr_tfidf.md) |
+| Random forest | 500 trees, `max_depth=200`, `min_samples_leaf=2` | 0.8495 ± 0.0079 | 0.8508 | 0.9251 | [`random_forest.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/random_forest.md) |
+| Random forest, 1–3 word n-grams | 500 trees, `max_depth=200`, `min_samples_leaf=2`, `--ngram-max 3` | 0.8675 ± 0.0086 | 0.8681 | 0.9393 | [`random_forest.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/random_forest.md) |
+| Multinomial Naive Bayes | `alpha=1.0` | 0.8292 ± 0.0091 | 0.8218 | 0.9140 | [`naive_bayes_tfidf.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week8/naive_bayes_tfidf.md) |
+| Decision tree | `max_depth=20`, `min_samples_leaf=20` | 0.7259 ± 0.0115 | 0.7397 | 0.7908 | [`dt_tfidf.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/dt_tfidf.md) |
 
-± is the sample standard deviation over the 10 folds. With shuffled labels every model scores 0.48-0.50.
+± is the sample standard deviation over 10 folds. With shuffled labels every model scores 0.48–0.50.
 
-Representation findings, from logistic regression on the same folds:
-
-* TF-IDF beats binary features by 1.2 points (0.8770 vs 0.8650) and raw counts by 1.7 points.
-* Removing stop words costs about 0.5 points, because the list deletes "not".
-* Adding word pairs gives the largest gain: binary + word pairs reaches 0.8893. Word pairs are not the shared default because millions of features are too heavy for the tree models.
+In the representation comparison (logistic regression), TF-IDF beats binary features by 1.2 points and raw counts by 1.7; removing stop words costs about 0.5; adding word pairs gains most (0.8893) but is too heavy for the tree models.
 
 ## R4: Neural networks
 
+**Input:** the TF-IDF vector (MLP) or the first 600 words in order (1D-CNN). **Output:** the probability that the review is positive; 0.5 is the threshold.
+
 | Model | Input | Accuracy (10 folds) | F1 | ROC-AUC | Documentation |
 | --- | --- | --- | --- | --- | --- |
-| MLP | TF-IDF + word pairs | 0.8955 ± 0.0088 | 0.8953 | 0.9616 | [`mlp.md`](documentation/week10/mlp.md) |
-| MLP | TF-IDF | 0.8802 ± 0.0075 | 0.8795 | 0.9506 | [`mlp.md`](documentation/week10/mlp.md) |
-| 1D-CNN | First 600 words, in order | 0.8772 ± 0.0055 | 0.8812 | 0.9504 | [`cnn.md`](documentation/week10/cnn.md) |
-| 1D-CNN, words shuffled | Same words, random order | 0.8555 ± 0.0081 | 0.8609 | 0.9331 | [`cnn.md`](documentation/week10/cnn.md) |
+| MLP | TF-IDF + word pairs | 0.8955 ± 0.0088 | 0.8953 | 0.9616 | [`mlp.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/mlp.md) |
+| MLP | TF-IDF | 0.8802 ± 0.0075 | 0.8795 | 0.9506 | [`mlp.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/mlp.md) |
+| 1D-CNN | First 600 words, in order | 0.8772 ± 0.0055 | 0.8812 | 0.9504 | [`cnn.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/cnn.md) |
+| 1D-CNN, words shuffled | Same words, random order | 0.8555 ± 0.0081 | 0.8609 | 0.9331 | [`cnn.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/cnn.md) |
 
 * On the same TF-IDF input, a hidden layer gives no reliable gain over logistic regression (+0.32 points, p = 0.086).
 * Word pairs give a clear gain: +1.54 points over the unigram MLP, better on all 10 folds (p < 0.0001).
@@ -183,7 +183,7 @@ Representation findings, from logistic regression on the same folds:
 
 ## Official test-set results
 
-Each model's chosen setting is retrained on all 24,779 training reviews and scored once on the 25,000 test reviews, in one joint run on 25 November 2026. Scores: [`results/scores/test/`](results/scores/test).
+Each model's chosen setting is retrained on all 24,779 training reviews and scored once on the 25,000 test reviews, in one joint run on 25 November 2026. Scores: [`results/scores/test/`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/tree/3105efa0c90afb927e0badae1df5420ef8dea5b7/results/scores/test).
 
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
 | --- | --- | --- | --- | --- | --- |
@@ -208,7 +208,7 @@ The out-of-fold predictions of six models (Naive Bayes, logistic regression, dec
 * The praise or criticism is about another work, such as the stage musical that a film adapts.
 * Some labels look wrong: one review labelled negative says "I loved the movie".
 
-Details: [`documentation/week10/error_analysis.md`](documentation/week10/error_analysis.md). The 718 reviews: [`results/predictions/error_finder.csv`](results/predictions/error_finder.csv), from [`scripts/error_finder.py`](scripts/error_finder.py).
+Details: [`documentation/week10/error_analysis.md`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/documentation/week10/error_analysis.md). The 718 reviews: [`results/predictions/error_finder.csv`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/results/predictions/error_finder.csv), from [`scripts/error_finder.py`](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/3105efa0c90afb927e0badae1df5420ef8dea5b7/scripts/error_finder.py).
 
 ## Reproducing the results
 

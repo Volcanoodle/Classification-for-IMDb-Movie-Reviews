@@ -127,6 +127,8 @@ python scripts/compare.py results/scores/lr_tfidf.csv results/scores/mlp_tfidf.c
 * "good" is frequent in both classes, and standard stop-word lists delete "not". The classical models therefore keep stop words.
 * Reviews of the same movie usually agree: 77% of movies with at least 5 reviews have at least 80% of their reviews with the same label. Folds are therefore grouped by movie. With random folds, the same baseline scores 87.9% instead of 86.5%, a 1.4-point gain from recognising movies.
 
+![Review length distribution](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/0f0877e4f4a16abe2190dab61279847bdec33499/documentation/week6/figures/review_length_distribution.png?raw=true)
+
 Details: [`documentation/week6/naive_bayes_eda.md`](documentation/week6/naive_bayes_eda.md) (figures in `documentation/week6/figures/`), and the data checks in [`data_checks.md`](documentation/week6/data_checks.md) and [`check_folds.md`](documentation/week6/check_folds.md).
 
 ### Clustering
@@ -141,6 +143,9 @@ TF-IDF vectors are reduced to 50 LSA components and clustered with K-Means and E
 | EM (GMM) | 6 | 0.0019 | 0.0032 | -0.0320 |
 
 Reviews do not group by sentiment (ARI at most 0.023). At k = 6 the clusters follow writing style instead, such as plot summaries centred on "he" or "she", and "movie" versus "film".
+
+![Clustering on 50 LSA components](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/0f0877e4f4a16abe2190dab61279847bdec33499/documentation/week10/figures/clustering_r2.png?raw=true)
+
 Details: [`documentation/week10/clustering_r2.md`](documentation/week10/clustering_r2.md).
 
 ## R3: Baseline training and evaluation
@@ -190,6 +195,8 @@ Each model's chosen setting is retrained on all 24,779 training reviews and scor
 | Random forest, 1–3 word n-grams | 0.8683 | 0.8702 | 0.8658 | 0.8680 | 0.9423 |
 | Naive Bayes | 0.8322 | 0.8680 | 0.7836 | 0.8236 | 0.9153 |
 | Decision tree | 0.7296 | 0.7138 | 0.7666 | 0.7392 | 0.7943 |
+
+![10-fold CV and test-set accuracy of each model](https://github.com/Volcanoodle/Classification-for-IMDb-Movie-Reviews/blob/0f0877e4f4a16abe2190dab61279847bdec33499/documentation/week10/figures/results_r3_r4.png?raw=true)
 
 ## Error analysis
 

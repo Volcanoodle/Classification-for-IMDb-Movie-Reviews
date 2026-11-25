@@ -40,7 +40,7 @@ def main():
     modes.add_argument(
         "--shuffle-labels",
         action="store_true",
-        help="Train on shuffled labels. Val accuracy should fall to about 50%.",
+        help="Train on shuffled labels. Val accuracy should fall to about 50%%.",
     )
     modes.add_argument(
         "--test",   
@@ -65,10 +65,11 @@ def main():
     parser.add_argument(
         "--ngram-max",
         type=int,
-        default=3,
+        default=1,
     )
 
     args = parser.parse_args()
+    base_name = "rf_tfidf" if args.ngram_max == 1 else f"rf_tfidf_ngram{args.ngram_max}"
 
     if args.test:
         start = perf_counter()
@@ -109,7 +110,7 @@ def main():
 
         out_dir = TEST_PRED_DIR
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_file = out_dir / "rf_tfidf.csv"
+        out_file = out_dir / f"{base_name}.csv"
         pd.DataFrame({
             "review_id": test["review_id"], 
             "prob": probs}).to_csv(
@@ -171,7 +172,7 @@ def main():
         overall_accuracy = (y_pred == y_true).mean()
 
         PRED_DIR.mkdir(parents=True, exist_ok=True)
-        name = "rf_tfidf_shuffled" if args.shuffle_labels else "rf_tfidf"
+        name = f"{base_name}_shuffled" if args.shuffle_labels else base_name
         out_file = PRED_DIR / f"{name}.csv"
         pd.DataFrame({
             "review_id": train["review_id"],

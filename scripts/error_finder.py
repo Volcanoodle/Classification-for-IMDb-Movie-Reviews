@@ -9,7 +9,7 @@ TRAIN_FILE = ROOT / "data" / "processed" / "train.csv"
 PRED_DIR = ROOT / "results" / "predictions"
 
 
-MODELS = ["mnb_tfidf", "lr_tfidf", "dt_tfidf", "rf_tfidf", "mlp", "cnn"]
+MODELS = ["mnb_tfidf", "lr_tfidf", "dt_tfidf", "rf_tfidf", "mlp_tfidf", "cnn"]
 
 def read_file(filename, columns):
     rows = pd.read_csv(

@@ -1,0 +1,24 @@
+Reviews every IMDb-trained model gets wrong: 1143 (4.6%); of these, positive: 21.2%
+  ... of which LR trained on Steam gets right: 39.5%
+
+Random short examples (<= 25 words) that every IMDb-trained model gets wrong:
+  [neg] I purchased this game and I have yet to get the game to start let alone work.
+  [neg] please stop breaking your own game, thx.
+  [neg] Very buggy. Enjoyed the different gameplay style but has a lot of NAT issues. Would not recommend.
+  [neg] If you try to stream this game you lose your cursor which makes it impossible to play :(
+  [neg] The Game Doesn't work for me, once I click new game it stops responding and closes the program &gt;:(
+  [neg] this game is not working it keeps saying pixel error
+  [neg] not as good as first game...
+  [neg] Super short, as much as I like the soundtrack and art it's hardly a game at all.
+  [pos] I got this game as a joke gift.  They had no idea.
+  [neg] Not as good as people think
+  [neg] I played this game once. I immediately regretted my decision.
+  [neg] There seems to be a lot of fan service so far, but also a lot of game breaking glitches. Don't get it right away.
+  [neg] hunting not cool
+  [neg] A big fan of Civilization since the first one, purchase Beyond Earth when it was release and now I am still playing Civilization V!
+  [pos] *Say with Japanese accent* -You no mess with Lo Wang!
+  [neg] Zelda without the charm.
+  [neg] Wow, Kabam really blew the fun out of this game.
+  [neg] Without the soundtrack this game blows. I cannot recommend it. Download an emulator and play the SNES version.
+  [neg] game of the year. so original and unique. wow.
+  [neg] Well maybe it could be a fun game but its impossible to find a game bugfree.

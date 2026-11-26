@@ -1,0 +1,41 @@
+Steam evaluation reviews: 25000
+Word tokens not in the IMDb vocabulary: 44946/1997057 = 2.3%
+Median share of unknown words per review: 1.1%
+Reviews with no known word at all: 10 (0.0%)
+
+Most common Steam words absent from the IMDb vocabulary (reviews containing them):
+dlc (479), devs (437), platformer (235), playable (229), rts (204), replayability (200), playthrough (188), platforming (175), https (163), customization (153), pixel (147), mmo (126), ubisoft (125), laggy (111), 2016 (111), optimized (102), pvp (98), uplay (98), framerate (95), gtx (93), npc (89), 2014 (87), singleplayer (85), skyrim (85), controllers (82)
+
+Frequent words (in >= 100 Steam reviews, stop words not shown) whose LR weight changes most (positive weight = pushes towards 'positive'):
+  More positive on Steam than on IMDb:
+    bad             IMDb  -7.71   Steam  -3.45   (2293 reviews)
+    worst           IMDb  -9.24   Steam  -5.61   (561 reviews)
+    awesome         IMDb  +2.18   Steam  +5.31   (873 reviews)
+    awful           IMDb  -6.45   Steam  -3.36   (358 reviews)
+    ridiculous      IMDb  -3.67   Steam  -0.67   (161 reviews)
+    cheap           IMDb  -2.40   Steam  +0.48   (403 reviews)
+    addictive       IMDb  +0.41   Steam  +3.27   (223 reviews)
+    problem         IMDb  -2.31   Steam  +0.52   (803 reviews)
+    oh              IMDb  -3.29   Steam  -0.57   (541 reviews)
+    addicting       IMDb  +0.02   Steam  +2.73   (121 reviews)
+    wonder          IMDb  -2.36   Steam  +0.22   (110 reviews)
+    better          IMDb  -1.99   Steam  +0.49   (2344 reviews)
+    waste           IMDb  -6.24   Steam  -3.90   (646 reviews)
+    challenging     IMDb  +0.14   Steam  +2.47   (544 reviews)
+    interesting     IMDb  -1.79   Steam  +0.47   (1336 reviews)
+  More negative on Steam than on IMDb:
+    refund          IMDb  -0.05   Steam  -4.46   (337 reviews)
+    unplayable      IMDb  -0.05   Steam  -4.18   (329 reviews)
+    crashes         IMDb  -0.34   Steam  -3.66   (459 reviews)
+    repetitive      IMDb  -0.54   Steam  -3.70   (475 reviews)
+    crash           IMDb  +0.29   Steam  -2.67   (265 reviews)
+    broken          IMDb  -0.25   Steam  -3.08   (427 reviews)
+    controls        IMDb  -0.05   Steam  -2.74   (1387 reviews)
+    change          IMDb  +0.91   Steam  -1.72   (653 reviews)
+    work            IMDb  +0.35   Steam  -2.28   (1519 reviews)
+    frustrating     IMDb  -0.09   Steam  -2.63   (543 reviews)
+    clunky          IMDb  -0.32   Steam  -2.85   (282 reviews)
+    buggy           IMDb  -0.13   Steam  -2.65   (314 reviews)
+    today           IMDb  +3.76   Steam  +1.26   (179 reviews)
+    loved           IMDb  +3.85   Steam  +1.35   (465 reviews)
+    job             IMDb  +2.94   Steam  +0.45   (384 reviews)

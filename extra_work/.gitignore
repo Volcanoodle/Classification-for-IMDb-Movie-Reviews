@@ -1,0 +1,4 @@
+# Steam data and per-review predictions stay local (size and licence)
+data_raw/
+data/
+predictions/
